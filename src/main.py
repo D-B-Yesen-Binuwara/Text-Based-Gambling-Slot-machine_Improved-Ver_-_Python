@@ -1,6 +1,6 @@
 import random
 import time
-#import os
+import os
 
 MAX_LINES = 3
 MIN_BET = 1
@@ -36,3 +36,30 @@ def get_valid_int(prompt, min_val=None, max_val=None):
         else:
             print("Must be a number")
 
+def get_slot_machine_spin(rows, cols, symbols):
+    all_symbols = list(symbols.keys())
+    weights = list(symbols.values())
+
+    columns = []
+    for _ in range(cols):
+        column = random.choices(all_symbols, weights=weights, k=rows)
+        columns.append(column)
+
+    return columns
+
+def print_slot_machine(columns):
+    for row in range(ROWS):
+        for i, column in enumerate(columns):
+            end_char = " | " if i != COLS - 1 else "\n"
+            print(column[row], end=end_char)
+
+def log_session(text):
+    log_path = os.path.join(os.path.dirname(__file__), "slot_game_log.txt")
+    with open("slot_game_log.txt", "a") as file:
+        file.write(text + "\n")
+
+def deposit():
+    amount = get_valid_int("Enter the amount you want to deposit: $", 1)
+    print("Amount Deposited Successfully.")
+    log_session(f"\n Deposited: ${amount}")
+    return amount
