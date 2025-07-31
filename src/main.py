@@ -87,6 +87,13 @@ def check_winnings(columns, lines, bet, values):
 
     return winnings, winning_lines, line_details
 
+def adjust_difficulty_after_jackpot():
+    global symbols_count, symbol_values
+    print("\n JACKPOT HIT! Increasing game difficulty...\n")
+    symbols_count["A"] = 1
+    symbol_values["A"] = 8
+    symbol_values["D"] = 1
+
 def spin_game(balance):
     global session_turns, session_winnings, jackpot_triggered
     lines = get_valid_int(f"Enter number of lines to bet on (1-{MAX_LINES}): ", 1, MAX_LINES)
@@ -127,8 +134,31 @@ def spin_game(balance):
     session_winnings += winnings
 
     if jackpot_triggered:
-        #adjust_difficulty_after_jackpot()
+        adjust_difficulty_after_jackpot()
         jackpot_triggered = False
 
     return winnings - total_bet
 
+def main():
+    print("Welcome to the Python Slot Machine Game!")
+    balance = deposit()
+    initial_deposit = balance
+
+    while True:
+        print(f"\n Current balance: ${balance}")
+        choice = input("Press Enter to spin, 'd' to deposit more, or 'q' to quit: ").lower()
+
+        if choice == "q":
+            break
+        elif choice == "d":
+            added = deposit()
+            balance += added
+        else:
+            change = spin_game(balance)
+            balance += change
+
+    print(f"\n Final balance: ${balance}")
+    log_session(f"\n Session Summary: Turns played: {session_turns}, Total winnings: ${session_winnings}, Final balance: ${balance}")
+    print("Session details saved to slot_game_log.txt")
+
+main()
