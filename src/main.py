@@ -8,7 +8,7 @@ MAX_BET = 5000
 ROWS = 3
 COLS = 3
 
-# Symbol count
+# Symbol frequency
 symbols_count = {
     "A": 2,
     "B": 4,
@@ -16,7 +16,7 @@ symbols_count = {
     "D": 8
 }
 
-# Symbol match multiplier
+# pay value per symbol
 symbol_values = {
     "A": 10,
     "B": 8,
@@ -40,6 +40,11 @@ def get_valid_int(prompt, min_val=None, max_val=None):
         else:
             print("Must be a number")
 
+def log_session(text):
+    log_path = os.path.join(os.path.dirname(__file__), "slot_game_log.txt")
+    with open("slot_game_log.txt", "a") as file:
+        file.write(text + "\n")
+
 def get_slot_machine_spin(rows, cols, symbols):
     all_symbols = list(symbols.keys())
     weights = list(symbols.values())
@@ -56,17 +61,6 @@ def print_slot_machine(columns):
         for i, column in enumerate(columns):
             end_char = " | " if i != COLS - 1 else "\n"
             print(column[row], end=end_char)
-
-def log_session(text):
-    log_path = os.path.join(os.path.dirname(__file__), "slot_game_log.txt")
-    with open("slot_game_log.txt", "a") as file:
-        file.write(text + "\n")
-
-def deposit():
-    amount = get_valid_int("Enter the amount you want to deposit: $", 1)
-    print("Amount Deposited Successfully.")
-    log_session(f"\n Deposited: ${amount}")
-    return amount
 
 def check_winnings(columns, lines, bet, values):
     global jackpot_triggered
@@ -93,6 +87,12 @@ def adjust_difficulty_after_jackpot():
     symbols_count["A"] = 1
     symbol_values["A"] = 8
     symbol_values["D"] = 1
+
+def deposit():
+    amount = get_valid_int("Enter the amount you want to deposit: $", 1)
+    print("Amount Deposited Successfully.")
+    log_session(f"\n Deposited: ${amount}")
+    return amount
 
 def spin_game(balance):
     global session_turns, session_winnings, jackpot_triggered
